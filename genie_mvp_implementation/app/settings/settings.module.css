@@ -93,3 +93,9 @@
   color: var(--color-text-muted);
   line-height: 1.5;
 }
+
+@media (max-width: 600px) {
+  .page {
+    padding: 24px 16px;
+  }
+}

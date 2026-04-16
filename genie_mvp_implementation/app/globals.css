@@ -130,3 +130,10 @@ textarea {
 #__next {
   height: 100%;
 }
+
+/* ── Global mobile overrides ── */
+@media (max-width: 600px) {
+  :root {
+    --genie-panel-width: 100vw;
+  }
+}

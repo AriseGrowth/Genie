@@ -138,8 +138,45 @@
   animation: wave 0.6s ease-in-out infinite;
 }
 
-/* When panel is open, push slightly left */
+/* Pending approvals badge */
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #f55a5a;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--color-bg);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* When panel is open, push slightly left (desktop only) */
 .open {
   bottom: 28px;
   right: calc(var(--genie-panel-width) + 16px);
+}
+
+@media (max-width: 600px) {
+  .orb {
+    bottom: 16px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+
+  /* On mobile, when panel is open the orb hides to avoid overlap */
+  .open {
+    opacity: 0;
+    pointer-events: none;
+    right: 16px;
+  }
 }

@@ -16,6 +16,7 @@
   align-items: center;
   gap: 8px;
   margin-right: 16px;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -38,11 +39,16 @@
 }
 
 .link {
+  position: relative;
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   color: var(--color-text-secondary);
   transition: color 0.15s, background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .link:hover {
@@ -55,11 +61,27 @@
   background: var(--color-surface-2);
 }
 
+/* Approval count badge on nav link */
+.navBadge {
+  background: #f55a5a;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
 .right {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .workspaceSwitcher {
@@ -97,9 +119,77 @@
   font-size: 12px;
   color: var(--color-text-secondary);
   transition: all 0.15s;
+  white-space: nowrap;
 }
 
 .logout:hover {
   border-color: var(--color-danger);
   color: var(--color-danger);
+}
+
+/* Hamburger — hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.hbar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text-secondary);
+  border-radius: 1px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.hbar1Open { transform: translateY(6px) rotate(45deg); }
+.hbar2Open { opacity: 0; }
+.hbar3Open { transform: translateY(-6px) rotate(-45deg); }
+
+/* ── Mobile ─────────────────────────────── */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: var(--nav-height);
+  }
+
+  .links {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+    padding: 8px 0 12px;
+    border-top: 1px solid var(--color-border);
+    order: 3;
+  }
+
+  .linksOpen {
+    display: flex;
+  }
+
+  .link {
+    width: 100%;
+    padding: 10px 8px;
+    border-radius: var(--radius);
+  }
+
+  .workspaceSwitcher {
+    display: none;
+  }
+
+  .logout {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
 }

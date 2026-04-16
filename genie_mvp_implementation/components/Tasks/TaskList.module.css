@@ -94,3 +94,13 @@
   text-align: center;
   padding: 40px 0;
 }
+
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .formRow {
+    flex-wrap: wrap;
+  }
+}

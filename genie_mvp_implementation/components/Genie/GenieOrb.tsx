@@ -4,7 +4,7 @@ import { useGenie } from '../../lib/GenieContext';
 import styles from './GenieOrb.module.css';
 
 export default function GenieOrb() {
-  const { genieState, toggleOpen, isOpen } = useGenie();
+  const { genieState, toggleOpen, isOpen, pendingApprovals } = useGenie();
 
   return (
     <div
@@ -59,6 +59,11 @@ export default function GenieOrb() {
         <div className={`${styles.smoke} ${styles.smoke2}`} />
         <div className={`${styles.smoke} ${styles.smoke3}`} />
       </div>
+
+      {/* Pending approval badge */}
+      {pendingApprovals > 0 && (
+        <div className={styles.badge}>{pendingApprovals > 9 ? '9+' : pendingApprovals}</div>
+      )}
 
       {/* Speaking wave bars */}
       {genieState === 'speaking' && (

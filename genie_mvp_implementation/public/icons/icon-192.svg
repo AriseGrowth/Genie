@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#0f0f11"/>
+  <circle cx="96" cy="96" r="60" fill="url(#orbGrad)"/>
+  <defs>
+    <radialGradient id="orbGrad" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#9d8fff"/>
+      <stop offset="55%" stop-color="#5a3fff"/>
+      <stop offset="100%" stop-color="#1e0a6e"/>
+    </radialGradient>
+  </defs>
+  <text x="96" y="80" font-size="28" text-anchor="middle" fill="#f0c040" opacity="0.95">✦</text>
+  <ellipse cx="80" cy="102" rx="7" ry="8" fill="rgba(255,255,255,0.9)"/>
+  <ellipse cx="112" cy="102" rx="7" ry="8" fill="rgba(255,255,255,0.9)"/>
+  <circle cx="80" cy="103" r="4" fill="#1a1a2e"/>
+  <circle cx="112" cy="103" r="4" fill="#1a1a2e"/>
+  <path d="M 74 122 Q 96 132 118 122" stroke="rgba(255,255,255,0.85)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+</svg>

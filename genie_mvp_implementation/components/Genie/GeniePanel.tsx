@@ -8,6 +8,7 @@ import MessageBubble, { ChatMessage } from '../Chat/MessageBubble';
 import ToolResultCard from '../Chat/ToolResultCard';
 import VoiceButton from '../Voice/VoiceButton';
 import FileUpload from '../Chat/FileUpload';
+import ConversationList from '../Chat/ConversationList';
 import styles from './GeniePanel.module.css';
 
 interface DisplayItem {
@@ -32,6 +33,7 @@ interface GeniePanelProps {
 export default function GeniePanel({ onSpeakText }: GeniePanelProps) {
   const { isOpen, setOpen, setGenieState } = useGenie();
   const { workspaceKind } = useWorkspace();
+  const [view, setView] = useState<'chat' | 'history'>('chat');
   const [items, setItems] = useState<DisplayItem[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,6 @@ export default function GeniePanel({ onSpeakText }: GeniePanelProps) {
 
   useEffect(() => {
     if (isOpen && items.length === 0) {
-      // Greeting on first open
       setItems([{
         id: 'greeting',
         type: 'message',
@@ -59,6 +60,29 @@ export default function GeniePanel({ onSpeakText }: GeniePanelProps) {
       }]);
     }
   }, [isOpen]);
+
+  const loadConversation = useCallback(async (id: string) => {
+    try {
+      const res = await apiFetch(`/api/conversations/${id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const loaded: DisplayItem[] = (data.messages ?? []).map((m: any) => ({
+        id: m.id,
+        type: 'message' as const,
+        message: {
+          id: m.id,
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+          timestamp: new Date(m.created_at),
+        },
+      }));
+      setItems(loaded);
+      setConversationId(id);
+      setView('chat');
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const handleSend = useCallback(async (messageOverride?: string) => {
     const text = (messageOverride ?? value).trim();
@@ -132,6 +156,21 @@ export default function GeniePanel({ onSpeakText }: GeniePanelProps) {
     handleSend(transcript);
   };
 
+  const startNewChat = () => {
+    setItems([{
+      id: 'greeting',
+      type: 'message',
+      message: {
+        id: 'greeting',
+        role: 'assistant',
+        content: "Right, let's conjure something up. What do you need?",
+        timestamp: new Date(),
+      }
+    }]);
+    setConversationId(null);
+    setView('chat');
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -142,66 +181,88 @@ export default function GeniePanel({ onSpeakText }: GeniePanelProps) {
           <div className={styles.miniOrb} />
           <div>
             <div className={styles.name}>Genie</div>
-            <div className={styles.status}>
-              {loading ? 'Thinking…' : 'Ready'}
-            </div>
+            <div className={styles.status}>{loading ? 'Thinking…' : 'Ready'}</div>
           </div>
         </div>
-        <button className={styles.closeBtn} onClick={() => setOpen(false)} aria-label="Close">✕</button>
-      </div>
-
-      {/* Messages */}
-      <div className={styles.messages}>
-        {items.map(item =>
-          item.type === 'message' && item.message ? (
-            <MessageBubble key={item.id} message={item.message} />
-          ) : (
-            <ToolResultCard key={item.id} toolName={item.toolName!} result={item.toolResult} />
-          )
-        )}
-        {loading && (
-          <div className={styles.loadingRow}>
-            <div className={styles.thinkingDots}>
-              <span /><span /><span />
-            </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Attached file preview */}
-      {attachedFile && (
-        <div className={styles.fileChip}>
-          <span>📎 {attachedFile.name}</span>
-          <button onClick={() => setAttachedFile(null)}>✕</button>
-        </div>
-      )}
-
-      {/* Input footer */}
-      <div className={styles.footer}>
-        <div className={styles.inputRow}>
-          <FileUpload onFile={setAttachedFile} />
-          <textarea
-            ref={textareaRef}
-            className={styles.textarea}
-            value={value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Your wish…"
-            disabled={loading}
-            rows={1}
-          />
-          <VoiceButton onResult={handleVoiceResult} loading={loading} />
+        <div className={styles.headerActions}>
           <button
-            className={styles.sendBtn}
-            onClick={() => handleSend()}
-            disabled={!value.trim() || loading}
-            aria-label="Send"
+            className={`${styles.iconBtn} ${view === 'history' ? styles.iconBtnActive : ''}`}
+            onClick={() => setView(v => v === 'history' ? 'chat' : 'history')}
+            title="Conversation history"
           >
-            ↑
+            ≡
           </button>
+          {view === 'history' && (
+            <button className={styles.iconBtn} onClick={startNewChat} title="New chat">
+              ✦
+            </button>
+          )}
+          <button className={styles.closeBtn} onClick={() => setOpen(false)} aria-label="Close">✕</button>
         </div>
       </div>
+
+      {/* History view */}
+      {view === 'history' ? (
+        <div className={styles.historyWrap}>
+          <p className={styles.historyTitle}>Past Conversations</p>
+          <ConversationList onSelect={loadConversation} currentId={conversationId} />
+        </div>
+      ) : (
+        <>
+          {/* Messages */}
+          <div className={styles.messages}>
+            {items.map(item =>
+              item.type === 'message' && item.message ? (
+                <MessageBubble key={item.id} message={item.message} />
+              ) : (
+                <ToolResultCard key={item.id} toolName={item.toolName!} result={item.toolResult} />
+              )
+            )}
+            {loading && (
+              <div className={styles.loadingRow}>
+                <div className={styles.thinkingDots}>
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Attached file preview */}
+          {attachedFile && (
+            <div className={styles.fileChip}>
+              <span>📎 {attachedFile.name}</span>
+              <button onClick={() => setAttachedFile(null)}>✕</button>
+            </div>
+          )}
+
+          {/* Input footer */}
+          <div className={styles.footer}>
+            <div className={styles.inputRow}>
+              <FileUpload onFile={setAttachedFile} />
+              <textarea
+                ref={textareaRef}
+                className={styles.textarea}
+                value={value}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Your wish…"
+                disabled={loading}
+                rows={1}
+              />
+              <VoiceButton onResult={handleVoiceResult} loading={loading} />
+              <button
+                className={styles.sendBtn}
+                onClick={() => handleSend()}
+                disabled={!value.trim() || loading}
+                aria-label="Send"
+              >
+                ↑
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

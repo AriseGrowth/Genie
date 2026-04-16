@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '../../lib/UserContext';
 import { useWorkspace } from '../../lib/WorkspaceContext';
+import { useGenie } from '../../lib/GenieContext';
 import { supabase } from '../../lib/supabaseClient';
 import styles from './Nav.module.css';
 
@@ -20,7 +22,9 @@ const NAV_LINKS = [
 export default function Nav() {
   const { session } = useUser();
   const { workspaceKind, setWorkspaceKind } = useWorkspace();
+  const { pendingApprovals } = useGenie();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (!session || pathname === '/auth/login') return null;
 
@@ -35,14 +39,21 @@ export default function Nav() {
         <span className={styles.brandName}>Genie</span>
       </div>
 
-      <div className={styles.links}>
+      {/* Desktop links */}
+      <div className={`${styles.links} ${menuOpen ? styles.linksOpen : ''}`}>
         {NAV_LINKS.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
             className={`${styles.link} ${pathname === href ? styles.active : ''}`}
+            onClick={() => setMenuOpen(false)}
           >
             {label}
+            {label === 'Approvals' && pendingApprovals > 0 && (
+              <span className={styles.navBadge}>
+                {pendingApprovals > 9 ? '9+' : pendingApprovals}
+              </span>
+            )}
           </Link>
         ))}
       </div>
@@ -64,6 +75,17 @@ export default function Nav() {
         </div>
         <button className={styles.logout} onClick={handleLogout}>
           Sign out
+        </button>
+
+        {/* Hamburger — mobile only */}
+        <button
+          className={styles.hamburger}
+          onClick={() => setMenuOpen(m => !m)}
+          aria-label="Toggle menu"
+        >
+          <span className={`${styles.hbar} ${menuOpen ? styles.hbar1Open : ''}`} />
+          <span className={`${styles.hbar} ${menuOpen ? styles.hbar2Open : ''}`} />
+          <span className={`${styles.hbar} ${menuOpen ? styles.hbar3Open : ''}`} />
         </button>
       </div>
     </nav>
