@@ -5,6 +5,8 @@ import { apiFetch } from '../../lib/apiFetch';
 import { useWorkspace } from '../../lib/WorkspaceContext';
 import styles from './ToolResultCard.module.css';
 import type { Task, EmailDraft, MeetingSummary, TodayBrief, Approval } from '../../types';
+import SearchResultCard from './SearchResultCard';
+import FilePreviewCard from './FilePreviewCard';
 
 interface Props {
   toolName: string;
@@ -24,6 +26,12 @@ export default function ToolResultCard({ toolName, result, onAction }: Props) {
       return <MeetingCard summary={result as MeetingSummary} onAction={onAction} />;
     case 'request_approval':
       return <ApprovalCard approval={result as Approval} onAction={onAction} />;
+    case 'search_web':
+      return <SearchResultCard query={result?.query ?? ''} results={result?.results ?? []} />;
+    case 'list_drive_files':
+      return <DriveFilesCard files={result ?? []} />;
+    case 'create_drive_document':
+      return <FilePreviewCard file={{ name: result?.name ?? 'Document', type: 'application/vnd.google-apps.document', url: result?.webViewLink }} />;
     default:
       return (
         <div className={styles.card}>
@@ -163,6 +171,29 @@ function MeetingCard({ summary, onAction }: { summary: MeetingSummary; onAction?
               {creating ? 'Creating…' : `Create ${selected.size} task(s)`}
             </button>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DriveFilesCard({ files }: { files: any[] }) {
+  return (
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
+        <span className={styles.cardLabel}>Google Drive</span>
+        <span className={styles.cardMeta}>{files.length} file(s)</span>
+      </div>
+      {files.length === 0 ? (
+        <p className={styles.cardMeta}>No files found — Google Drive may not be connected yet.</p>
+      ) : (
+        <div className={styles.list}>
+          {files.map((f: any, i: number) => (
+            <a key={i} href={f.webViewLink} target="_blank" rel="noopener noreferrer" className={styles.checkRow}>
+              <span>📄</span>
+              <span>{f.name}</span>
+            </a>
+          ))}
         </div>
       )}
     </div>

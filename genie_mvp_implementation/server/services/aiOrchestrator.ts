@@ -8,6 +8,8 @@ import { createDraft as createEmailDraft } from './draftService';
 import { createTask } from './taskService';
 import { summariseMeetingText } from './meetingService';
 import { createApproval } from './approvalService';
+import { searchWeb } from '../integrations/webSearch';
+import { listFiles as listDriveFiles, createDocument as createDriveDocument } from '../integrations/googleDrive';
 
 export interface OrchestratorInput {
   userId: string;
@@ -51,8 +53,8 @@ export async function orchestrate({ userId, workspaceKind, conversationId, messa
 
   const tools = TOOL_DEFINITIONS.map(def => ({
     type: 'function' as const,
-    function: { name: def.name, description: def.description, parameters: def.parameters },
-  }));
+    function: { name: def.name, description: def.description, parameters: def.parameters as Record<string, unknown> },
+  })) as OpenAI.Chat.ChatCompletionTool[];
 
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
     { role: 'system', content: SYSTEM_PROMPT },
@@ -102,6 +104,16 @@ export async function orchestrate({ userId, workspaceKind, conversationId, messa
           actionType: args.action_type,
           payload: args.payload,
         });
+        break;
+      case 'search_web':
+        result = await searchWeb(args.query);
+        result = { query: args.query, results: result };
+        break;
+      case 'list_drive_files':
+        result = await listDriveFiles(userId, args.query);
+        break;
+      case 'create_drive_document':
+        result = await createDriveDocument(userId, args.title, args.content);
         break;
       default:
         throw new Error(`Unsupported tool: ${name}`);

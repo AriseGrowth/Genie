@@ -100,5 +100,48 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ['action_type', 'payload', 'workspace'],
       additionalProperties: false
     }
+  },
+  {
+    type: 'function',
+    name: 'search_web',
+    description: 'Search the web for current information, news, or facts not in your training data.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'The search query' },
+        workspace: { type: 'string', enum: ['personal', 'business'] }
+      },
+      required: ['query', 'workspace'],
+      additionalProperties: false
+    }
+  },
+  {
+    type: 'function',
+    name: 'list_drive_files',
+    description: 'List files in the user\'s Google Drive, optionally filtered by a search query.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Optional search query to filter files' },
+        workspace: { type: 'string', enum: ['personal', 'business'] }
+      },
+      required: ['workspace'],
+      additionalProperties: false
+    }
+  },
+  {
+    type: 'function',
+    name: 'create_drive_document',
+    description: 'Create a Google Docs document with the given title and content.',
+    parameters: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        content: { type: 'string', description: 'Document body content (markdown or plain text)' },
+        workspace: { type: 'string', enum: ['personal', 'business'] }
+      },
+      required: ['title', 'content', 'workspace'],
+      additionalProperties: false
+    }
   }
 ];

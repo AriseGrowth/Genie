@@ -1,0 +1,23 @@
+.hidden {
+  display: none;
+}
+
+.btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}

@@ -8,12 +8,13 @@ import { supabase } from '../../lib/supabaseClient';
 import styles from './Nav.module.css';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Chat' },
+  { href: '/', label: 'Home' },
   { href: '/today', label: 'Today' },
   { href: '/tasks', label: 'Tasks' },
   { href: '/drafts', label: 'Drafts' },
   { href: '/approvals', label: 'Approvals' },
   { href: '/meetings', label: 'Meetings' },
+  { href: '/settings', label: 'Settings' },
 ];
 
 export default function Nav() {
