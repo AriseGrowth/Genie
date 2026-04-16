@@ -1,0 +1,105 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--nav-height);
+  padding: 0 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.logo {
+  font-size: 18px;
+  color: var(--color-accent);
+}
+
+.brandName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.link {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: color 0.15s, background 0.15s;
+}
+
+.link:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-2);
+}
+
+.active {
+  color: var(--color-text-primary) !important;
+  background: var(--color-surface-2);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.workspaceSwitcher {
+  display: flex;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.wsBtn {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.wsBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.wsActive {
+  background: var(--color-accent);
+  color: #fff !important;
+}
+
+.logout {
+  padding: 5px 12px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.logout:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}

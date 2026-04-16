@@ -1,0 +1,61 @@
+.item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.actionLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-warning);
+}
+
+.date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.summary {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.approve {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.reject {
+  background: transparent;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+}
