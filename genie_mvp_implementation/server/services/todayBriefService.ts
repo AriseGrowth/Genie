@@ -1,6 +1,5 @@
 import { TodayBrief, WorkspaceKind } from '../../types';
 import { fetchEvents } from '../integrations/googleCalendar';
-import { listOpenTasks } from '../integrations/googleTasks';
 import { supabase } from '../integrations/supabase';
 
 /**
@@ -24,9 +23,20 @@ export async function buildTodayBrief(userId: string, workspaceKind: WorkspaceKi
   // Fetch calendar events (stubbed).
   const events = await fetchEvents(userId, `${userId}-${workspaceKind}`, dateFrom.toISOString(), dateTo.toISOString());
 
-  // Fetch open tasks (stubbed). In a real implementation you would
-  // fetch from Supabase as well; we rely on Google Tasks stub here.
-  const tasks = await listOpenTasks(userId);
+  // Fetch open tasks from Supabase (Google Tasks stub returns empty array).
+  const { data: dbTasks } = await supabase
+    .from('tasks')
+    .select('id, title, due_at, priority')
+    .eq('workspace_id', `${userId}-${workspaceKind}`)
+    .eq('status', 'open')
+    .order('due_at', { ascending: true })
+    .limit(10);
+  const tasks = (dbTasks ?? []).map((t: any) => ({
+    id: t.id,
+    title: t.title,
+    dueAt: t.due_at,
+    priority: t.priority,
+  }));
 
   // Build simple risks: overdue tasks are tasks with due dates in the past.
   const overdue = tasks.filter((t: any) => t.dueAt && new Date(t.dueAt) < today);

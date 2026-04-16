@@ -18,13 +18,15 @@ export async function summariseMeetingText(userId: string, workspaceId: string, 
     { role: 'system', content: systemPrompt } as const,
     { role: 'user', content: meetingText } as const
   ];
-  const response = await callOpenAI({ messages });
-  const content = response.choices[0].message?.content;
+  const response = await callOpenAI({ messages, jsonMode: true });
+  const content = response.choices[0].message?.content ?? '{}';
   let parsed: { summary: string; decisions: string[]; action_items: any[] };
   try {
-    parsed = JSON.parse(content || '{}');
-  } catch (err) {
-    parsed = { summary: '', decisions: [], action_items: [] };
+    // Strip markdown code fences if present
+    const clean = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    parsed = JSON.parse(clean);
+  } catch {
+    parsed = { summary: content, decisions: [], action_items: [] };
   }
   // Generate a temporary id for the meeting summary
   const summaryId = `ms-${Date.now()}`;
